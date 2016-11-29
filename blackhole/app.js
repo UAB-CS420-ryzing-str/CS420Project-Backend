@@ -1,11 +1,14 @@
 const port = 8080;
-const SELECT_ALL = "SELECT * FROM cs420";
+const SELECT_ALL = "SELECT * FROM cs420 WHERE LATNS BETWEEN ?AND ? LONGEW BETWEEN ? AND ?";
 var app = require("express")();
 var http = require("http").Server(app);
-var max_lat = 0.0;
-var max_long = 0.0;
-var min_lat = 0.0;
-var min_long = 0.0;
+
+const max_lat = -200;
+const max_long = 1800;
+const min_lat = 0.0;
+const min_long = 1600;
+
+var returnArray = [];
 
 const pool = mysql.createPool({
    connectionLimit: 25,
@@ -25,17 +28,26 @@ app.get("/health", function(req, res) {
 
 app.get("/getData", function(req, res) {
   pool.getConnection((err, connection) => {
-    connection.query(SELECT_ALL, (err, rows, fields) =>{
+    for(var lat = min_lat; lat <= max_lat; lat -= 0.5) {
+      for(var lon = min_long; lat <= max_long; lon += 0.5) {
 
-      if(err) {
-        console.log("fuck: " + err);
+          if(lat == min_lat && lon == min_long) {
+            continue;
+          }
+
+          connection.query(SELECT_ALL, [lat - 0.5, lat, lon - 0.5, lon], function(err, results) {
+            if(err) {
+              console.log("error: " + err);
+            } else {
+              var obj = {};
+              obj["data"] = results.length;
+
+              returnArray.push(obj);
+              connection.release();
+          }
+        });
       }
-
-
-
-      connection.release();
-
-    });
+    }
   });
 });
 
