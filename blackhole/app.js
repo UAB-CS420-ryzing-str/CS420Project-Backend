@@ -28,10 +28,13 @@ app.get("/health", function(req, res) {
 });
 
 app.get("/getData", function(req, res) {
+
+  console.log("REQUEST RECIEVED!!");
+
   pool.getConnection((err, connection) => {
 
     for(var lat = min_lat; lat >= max_lat; lat -= 0.5) {
-        console.log("current loop @ : " + lat )
+        //console.log("current loop @ : " + lat )
       for(var lon = min_long; lon <= max_long; lon += 0.5) {
           if(lat == min_lat && lon == min_long) {
             continue;
@@ -51,6 +54,8 @@ app.get("/getData", function(req, res) {
       }
     }
   });
+
+  console.log("DONE!");
 });
 
 app.listen(port, function() {
