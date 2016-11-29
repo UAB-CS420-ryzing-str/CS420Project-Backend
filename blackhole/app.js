@@ -13,8 +13,8 @@ var returnArray = [];
 const pool = mysql.createPool({
    connectionLimit: 25,
    host: 'localhost',
-   user: 'node'
-   password: 'nodePassword'
+   user: 'node',
+   password: 'nodePassword',
    database: 'cs420'
  });
 
