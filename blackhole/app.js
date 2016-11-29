@@ -34,8 +34,7 @@ console.log("REQUEST RECIEVED");
   pool.getConnection((err, connection) => {
 
     console.log("CONNECTION OPENED TO DB");
-
-    for(var lat = min_lat; lat <= max_lat; lat -= 0.5) {
+    for(var lat = min_lat; lat >= max_lat; lat -= 0.5) {
       for(var lon = min_long; lat <= max_long; lon += 0.5) {
 
           console.log("current loop @ : " + lat + " " + lon)
