@@ -11,7 +11,7 @@ const min_long = 1600;
 
 var returnArray = [];
 
-const pool = mysql.createPool({
+const pool = mysql.createConnection({
    host: 'localhost',
    user: 'node',
    password: 'nodePassword',
