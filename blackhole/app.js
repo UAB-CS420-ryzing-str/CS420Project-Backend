@@ -12,7 +12,6 @@ const min_long = 1600;
 var returnArray = [];
 
 const pool = mysql.createPool({
-   connectionLimit: 25,
    host: 'localhost',
    user: 'node',
    password: 'nodePassword',
@@ -31,7 +30,7 @@ app.get("/getData", function(req, res) {
 
   console.log("REQUEST RECIEVED!!");
 
-  pool.getConnection((err, connection) => {
+  pool.connect();
 
     for(var lat = min_lat; lat >= max_lat; lat -= 0.5) {
         //console.log("current loop @ : " + lat )
@@ -53,7 +52,34 @@ app.get("/getData", function(req, res) {
         });
       }
     }
-  });
+
+    pool.end();
+
+
+
+  // pool.getConnection((err, connection) => {
+  //
+  //   for(var lat = min_lat; lat >= max_lat; lat -= 0.5) {
+  //       //console.log("current loop @ : " + lat )
+  //     for(var lon = min_long; lon <= max_long; lon += 0.5) {
+  //         if(lat == min_lat && lon == min_long) {
+  //           continue;
+  //         }
+  //
+  //         connection.query(SELECT_ALL, [lat - 0.5, lat, lon - 0.5, lon], function(err, results) {
+  //           if(err) {
+  //             console.log("error: " + err);
+  //           } else {
+  //             var obj = {};
+  //             obj["data"] = results.length;
+  //
+  //             returnArray.push(obj);
+  //             connection.release();
+  //         }
+  //       });
+  //     }
+  //   }
+  // });
 
   console.log("DONE!");
 });
