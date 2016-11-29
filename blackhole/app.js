@@ -39,7 +39,7 @@ app.get("/getData", function(req, res) {
             continue;
           }
 
-          connection.query(SELECT_ALL, [lat - 0.5, lat, lon - 0.5, lon], function(err, results) {
+          pool.query(SELECT_ALL, [lat - 0.5, lat, lon - 0.5, lon], function(err, results) {
             if(err) {
               console.log("error: " + err);
             } else {
@@ -47,7 +47,6 @@ app.get("/getData", function(req, res) {
               obj["data"] = results.length;
 
               returnArray.push(obj);
-              connection.release();
           }
         });
       }
