@@ -28,22 +28,15 @@ app.get("/health", function(req, res) {
 });
 
 app.get("/getData", function(req, res) {
-
-console.log("REQUEST RECIEVED");
-
   pool.getConnection((err, connection) => {
 
-    console.log("CONNECTION OPENED TO DB");
     for(var lat = min_lat; lat >= max_lat; lat -= 0.5) {
+        console.log("current loop @ : " + lat )
       for(var lon = min_long; lon <= max_long; lon += 0.5) {
-
-          console.log("current loop @ : " + lat + " " + lon)
-
           if(lat == min_lat && lon == min_long) {
             continue;
           }
 
-          console.log("QUERYING DB..");
           connection.query(SELECT_ALL, [lat - 0.5, lat, lon - 0.5, lon], function(err, results) {
             if(err) {
               console.log("error: " + err);
