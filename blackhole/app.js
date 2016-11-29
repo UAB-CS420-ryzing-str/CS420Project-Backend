@@ -2,6 +2,7 @@ const port = 8080;
 const SELECT_ALL = "SELECT * FROM cs420 WHERE LATNS BETWEEN ?AND ? LONGEW BETWEEN ? AND ?";
 var app = require("express")();
 var http = require("http").Server(app);
+var mysql = require("mysql");
 
 const max_lat = -200;
 const max_long = 1800;
