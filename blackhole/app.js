@@ -28,9 +28,14 @@ app.get("/health", function(req, res) {
 });
 
 app.get("/getData", function(req, res) {
+
+console.log("REQUEST RECIEVED");
+
   pool.getConnection((err, connection) => {
     for(var lat = min_lat; lat <= max_lat; lat -= 0.5) {
       for(var lon = min_long; lat <= max_long; lon += 0.5) {
+
+          console.log("current loop @ : " + lat + " " + lon)
 
           if(lat == min_lat && lon == min_long) {
             continue;
