@@ -54,7 +54,9 @@ app.get("/getData", function(req, res) {
       }
     }
 
-    res.send(returnArray);
+    if(returnArray.length == 40) {
+      res.send(returnArray);
+    }
 });
 
 /** Only get the data between these coords **/
