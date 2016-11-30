@@ -35,11 +35,11 @@ app.get("/getData", function(req, res) {
   console.log("REQUEST RECIEVED!!");
   // var returnArray = [];
 
-  for(var current_lat = min_lat; current_lat >= max_lat; current_lat -= .5) {
-    for(var current_long = min_long; current_long <= max_long; current_long += .5) {
+  for(var current_lat = min_lat; current_lat >= max_lat; current_lat -= 5) {
+    for(var current_long = min_long; current_long <= max_long; current_long += 5) {
 
-      var lat_back_step = current_lat + .5;
-      var long_back_step = current_long - .5;
+      var lat_back_step = current_lat + 5;
+      var long_back_step = current_long - 5;
       var query = "SELECT COUNT(*) as rowCount FROM hurricane_data WHERE (LatNS BETWEEN " + current_lat + " AND " + lat_back_step + ") AND (LonEW BETWEEN " + long_back_step + " AND " + current_long + ");";
       console.log("BUILT QUERY: " + query);
       console.log("");
@@ -60,7 +60,6 @@ app.get("/getData", function(req, res) {
     }
   }
 
-  res.send(returnArray);
     // res.send(returnArray);
 });
 
@@ -70,9 +69,7 @@ function callback(data, res) {
   returnArray.push(obj);
   delete results;
 
-  console.log("return array = " + returnArray);
-
-  if(returnArray.length == 10) {
+  if(returnArray.length == 1600) {
     sendArray(res);
   }
 }
