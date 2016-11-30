@@ -3,14 +3,10 @@ var http = require("http").Server(app);
 var mysql = require("mysql");
 
 const port = 8080;
-var SELECT_BETWEEN = "SELECT COUNT(*) FROM hurricane_data WHERE (LatNS BETWEEN ? AND ?) AND (LonEW BETWEEN ? AND ?)";
-// "SELECT COUNT(*) FROM hurricane_data WHERE (LatNS BETWEEN -200.0 AND 0.0) AND (LonEW BETWEEN 1600 AND 1800)"
-
 const min_lat = 0.0;
 const max_lat = -200;
 const min_long = 1600;
 const max_long = 1800;
-
 const pool = mysql.createPool({
    connectionLimit: 25,
    host: '45.55.77.74',
@@ -19,6 +15,7 @@ const pool = mysql.createPool({
    database: 'cs420'
  });
 
+ var SELECT_BETWEEN = "SELECT COUNT(*) FROM hurricane_data WHERE (LatNS BETWEEN ? AND ?) AND (LonEW BETWEEN ? AND ?)";
  var returnArray = [];
 
 app.get("/", function(req, res) {
@@ -32,49 +29,41 @@ app.get("/health", function(req, res) {
 /** Get ALL the data **/
 app.get("/getData", function(req, res) {
 
-  console.log("REQUEST RECIEVED!!");
-  // var returnArray = [];
+  console.log("/getData request recieved...");
 
   for(var current_lat = min_lat; current_lat >= max_lat; current_lat -= 5) {
     for(var current_long = min_long; current_long <= max_long; current_long += 5) {
-
       var lat_back_step = current_lat + 5;
       var long_back_step = current_long - 5;
+
       var query = "SELECT COUNT(*) as rowCount FROM hurricane_data WHERE (LatNS BETWEEN " + current_lat + " AND " + lat_back_step + ") AND (LonEW BETWEEN " + long_back_step + " AND " + current_long + ");";
-      console.log("BUILT QUERY: " + query);
-      console.log("");
-      pool.getConnection((err, connection) => {
-        connection.query(query, function(err, results) {
-          if(err) {
-                    console.log("error: " + err);
-                  } else {
-                    var obj = {};
-
-                    console.log("COUNT: " + JSON.stringify(results));
-                    callback(results, res);
-                }
-              connection.release();
-            });
-      });
-
+      queryDb(query, res);
     }
   }
-
-    // res.send(returnArray);
 });
 
-function callback(data, res) {
-  var obj = {};
-  obj["data"] = data[0].rowCount;
-  returnArray.push(obj);
-  delete results;
+function queryDb(query, res) {
+  pool.getConnection((err, connection) => {
+    connection.query(query, function(err, results) {
+      if(err) {
+        console.log("error: " + err);
+      } else {
 
-  if(returnArray.length == 1600) {
-    sendArray(res);
-  }
+        var obj = {};
+        obj["data"] = results[0].rowCount;
+        returnArray.push(obj);
+        delete results;
+        if(returnArray.length == 1600) {
+          sendResponse(res);
+        }
+      }
+    connection.release();
+    });
+  });
 }
 
-function sendArray(res) {
+function sendResponse(res) {
+  console.log("Sending response!");
   res.send(returnArray);
 }
 
