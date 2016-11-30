@@ -68,9 +68,11 @@ app.get("/getData", function(req, res) {
     //   }
     // }
 
-    while (returnArray.length == 40) {
-      res.send(returnArray);
-    }
+    // while (returnArray.length == 40) {
+    //   res.send(returnArray);
+    // }
+
+    res.send("DONE");
 });
 
 /** Only get the data between these coords **/
