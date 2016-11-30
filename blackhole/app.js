@@ -45,6 +45,8 @@ app.get("/getData", function(req, res) {
                     console.log("error: " + err);
                   } else {
                     var obj = {};
+
+                    console.log("COUNT: " + results[0].rowCount);
                     obj["data"] = results[0].rowCount;
 
                     delete results;
@@ -72,7 +74,7 @@ app.get("/getData", function(req, res) {
     //   res.send(returnArray);
     // }
 
-    res.send("DONE");
+    res.send(returnArray);
 });
 
 /** Only get the data between these coords **/
