@@ -17,8 +17,6 @@ const connection = mysql.createPool({
    password: 'nodePassword',
    database: 'cs420'
  });
-connection.connect();
-
 
 app.get("/", function(req, res) {
   res.send("Hello, World!");
