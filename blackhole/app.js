@@ -16,6 +16,8 @@ const connection = mysql.createConnection({
    password: 'nodePassword',
    database: 'cs420'
  });
+connection.connect();
+
 
 app.get("/", function(req, res) {
   res.send("Hello, World!");
@@ -31,7 +33,6 @@ app.get("/getData", function(req, res) {
   console.log("REQUEST RECIEVED!!");
   var returnArray = [];
 
-  connection.connect();
     for(var lat = min_lat; lat >= max_lat; lat -= 0.5) {
       for(var lon = min_long; lon <= max_long; lon += 0.5) {
         //skip the first loop to prevent getting values between 0 and 0
@@ -62,7 +63,6 @@ app.get("/get/location/:minLat/:maxLat/:minLong/:maxLong", function(req, res) {
 
   var returnArray = [];
 
-  connection.connect();
   connection.query(SELECT_BETWEEN, [req.params.minLat, req.params.maxLat, req.params.minLong, req.params.maxLong], function(err, results) {
     if(err) {
       console.log("error: " + err);
@@ -72,7 +72,6 @@ app.get("/get/location/:minLat/:maxLat/:minLong/:maxLong", function(req, res) {
         }
     }
   });
-  connection.end();
 
   res.send(returnArray);
 });
