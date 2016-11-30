@@ -12,7 +12,7 @@ const max_long = 1610;
 
 const connection = mysql.createPool({
    connectionLimit: 25,
-   host: 'localhost',
+   host: '45.55.77.74/',
    user: 'node',
    password: 'nodePassword',
    database: 'cs420'
@@ -32,15 +32,15 @@ app.get("/getData", function(req, res) {
   console.log("REQUEST RECIEVED!!");
   var returnArray = [];
 
-    for(var lat = min_lat; lat >= max_lat; lat -= 0.5) {
-      for(var lon = min_long; lon <= max_long; lon += 0.5) {
-        //skip the first loop to prevent getting values between 0 and 0
-          if(lat == min_lat && lon == min_long) {
-            continue;
-          }
+    // for(var lat = min_lat; lat >= max_lat; lat -= 0.5) {
+    //   for(var lon = min_long; lon <= max_long; lon += 0.5) {
+    //     //skip the first loop to prevent getting values between 0 and 0
+    //       if(lat == min_lat && lon == min_long) {
+    //         continue;
+    //       }
 
           connection.getConnection((err, connection) => {
-            connection.query(SELECT_BETWEEN, [lat, lat + 0.5, lon -0.5, lon], function(err, results) {
+            connection.query(SELECT_BETWEEN, [max_lat, min_lat, min_long, max_long], function(err, results) {
               if(err) {
                     console.log("error: " + err);
                   } else {
@@ -67,8 +67,8 @@ app.get("/getData", function(req, res) {
         //       returnArray.push(obj);
         //   }
         // });
-      }
-    }
+    //   }
+    // }
 
     // while (returnArray.length == 40) {
     //   res.send(returnArray);
