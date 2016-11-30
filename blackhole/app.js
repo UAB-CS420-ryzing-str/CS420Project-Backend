@@ -53,7 +53,6 @@ app.get("/getData", function(req, res) {
       }
     }
 
-    connection.end();
     res.send(returnArray);
 });
 
