@@ -6,9 +6,9 @@ const port = 8080;
 const SELECT_BETWEEN = "SELECT COUNT(*) AS rowCount FROM hurricane_data WHERE LatNS BETWEEN ? AND ? AND LonEW BETWEEN ? AND ? LIMIT 1;";
 
 const min_lat = 0.0;
-const max_lat = -200;
+const max_lat = -10;
 const min_long = 1600;
-const max_long = 1800;
+const max_long = 1610;
 
 const connection = mysql.createPool({
    connectionLimit: 25,
@@ -32,12 +32,12 @@ app.get("/getData", function(req, res) {
   console.log("REQUEST RECIEVED!!");
   var returnArray = [];
 
-    // for(var lat = min_lat; lat >= max_lat; lat -= 0.5) {
-    //   for(var lon = min_long; lon <= max_long; lon += 0.5) {
-    //     //skip the first loop to prevent getting values between 0 and 0
-    //       if(lat == min_lat && lon == min_long) {
-    //         continue;
-    //       }
+    for(var lat = min_lat; lat >= max_lat; lat -= 0.5) {
+      for(var lon = min_long; lon <= max_long; lon += 0.5) {
+        //skip the first loop to prevent getting values between 0 and 0
+          if(lat == min_lat && lon == min_long) {
+            continue;
+          }
 
           connection.getConnection((err, connection) => {
             connection.query(SELECT_BETWEEN, [0.5, 1.0, 1600, 1600.5], function(err, results) {
@@ -67,8 +67,8 @@ app.get("/getData", function(req, res) {
         //       returnArray.push(obj);
         //   }
         // });
-    //   }
-    // }
+      }
+    }
 
     // while (returnArray.length == 40) {
     //   res.send(returnArray);
