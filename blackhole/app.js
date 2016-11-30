@@ -3,7 +3,7 @@ var http = require("http").Server(app);
 var mysql = require("mysql");
 
 const port = 8080;
-const SELECT_BETWEEN = "SELECT * FROM cs420 WHERE LATNS BETWEEN ?AND ? LONGEW BETWEEN ? AND ?";
+const SELECT_BETWEEN = "SELECT * FROM cs420 WHERE LATNS BETWEEN ? AND ? LONGEW BETWEEN ? AND ?";
 
 const min_lat = 0.0;
 const max_lat = -200;
@@ -25,6 +25,7 @@ app.get("/health", function(req, res) {
   res.send("Sex, Drugs, Rock & Roll!");
 });
 
+/** Get ALL the data **/
 app.get("/getData", function(req, res) {
 
   console.log("REQUEST RECIEVED!!");
@@ -38,7 +39,7 @@ app.get("/getData", function(req, res) {
             continue;
           }
 
-          pool.query(SELECT_BETWEEN, [lat - 0.5, lat, lon - 0.5, lon], function(err, results) {
+          connection.query(SELECT_BETWEEN, [lat - 0.5, lat, lon - 0.5, lon], function(err, results) {
             if(err) {
               console.log("error: " + err);
             } else {
@@ -53,7 +54,28 @@ app.get("/getData", function(req, res) {
     }
 
     connection.end();
-    res.send("done af"); //TODO: return array.
+    res.send(returnArray);
+});
+
+/** Only get the data between these coords **/
+app.get("/get/location/:minLat/:maxLat/:minLong/:maxLong", function(req, res) {
+  console.log("REQUEST RECIEVED");
+
+  var returnArray = [];
+
+  connection.connect();
+  connection.query(SELECT_BETWEEN, [req.params.minLat, req.params.maxLat, req.params.minLong, req.params.maxLong], function(err, results) {
+    if(err) {
+      console.log("error: " + err);
+    } else {
+        if(results.length > 0) {
+          returnArray = results;
+        }
+    }
+  });
+  connection.end();
+
+  res.send(returnArray);
 });
 
 app.listen(port, function() {
