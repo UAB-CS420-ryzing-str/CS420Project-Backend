@@ -27,9 +27,9 @@ app.get("/health", function(req, res) {
 });
 
 /** Get ALL the data **/
-app.get("/getData", function(req, res) {
+app.get("/get/data/count", function(req, res) {
 
-  console.log("/getData request recieved...");
+  console.log("/get/data/count request recieved...");
 
   for(var current_lat = min_lat; current_lat >= max_lat; current_lat -= 5) {
     for(var current_long = min_long; current_long <= max_long; current_long += 5) {
@@ -37,12 +37,12 @@ app.get("/getData", function(req, res) {
       var long_back_step = current_long - 5;
 
       var query = "SELECT COUNT(*) as rowCount FROM hurricane_data WHERE (LatNS BETWEEN " + current_lat + " AND " + lat_back_step + ") AND (LonEW BETWEEN " + long_back_step + " AND " + current_long + ");";
-      queryDb(query, res);
+      queryDbForAllData(query, res);
     }
   }
 });
 
-function queryDb(query, res) {
+function queryDbForAllData(query, res) {
   pool.getConnection((err, connection) => {
     connection.query(query, function(err, results) {
       if(err) {
@@ -68,23 +68,36 @@ function sendResponse(res) {
 }
 
 /** Only get the data between these coords **/
-app.get("/get/location/:minLat/:maxLat/:minLong/:maxLong", function(req, res) {
-  console.log("REQUEST RECIEVED");
+app.get("/get/location/minLat/:minLat/maxLat/:maxLat/minLong/:minLong/maxLong/:maxLong", function(req, res) {
 
-  var returnArray = [];
+  var minLat = req.params.minLat;
+  var maxLat = req.params.maxLat;
+  var minLong = req.params.minLong;
+  var maxLong = req.params.maxLong;
 
-  connection.query(SELECT_BETWEEN, [req.params.minLat, req.params.maxLat, req.params.minLong, req.params.maxLong], function(err, results) {
-    if(err) {
-      console.log("error: " + err);
-    } else {
-        if(results.length > 0) {
-          returnArray = results;
-        }
-    }
-  });
+  console.log("/get/location request recieved minLat:" + minLat + " maxLat:" + maxLat + " minLong:" + minLong + " maxLong:" + maxLong);
 
-  res.send(returnArray);
+  var query = "SELECT LatNS, LonEW, YYYYMMDDHH FROM hurricane_data WHERE (LatNS BETWEEN " + minLat + " AND " + maxLat + ") AND (LonEW BETWEEN " + minLong + " AND " + maxLong + " ) ORDER BY LatNS, LonEW, YYYYMMDDHH;";
+  queryDBForLocationData(query, res);
 });
+
+function queryDBForLocationData(query, res) {
+  pool.getConnection((err, connection) => {
+    connection.query(query, function(err, results) {
+      if(err) {
+        console.log("error: " + err);
+      } else {
+          if(results.length === 0) {
+            console.log("No results. returning empty array");
+            res.send([]);
+          } else {
+            res.send(results);
+          }
+      }
+    connection.release();
+    });
+  });
+}
 
 app.listen(port, function() {
   console.log("Blackhole listening on port =" + port);
