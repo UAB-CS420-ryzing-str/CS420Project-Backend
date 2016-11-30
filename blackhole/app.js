@@ -54,7 +54,7 @@ function queryDbForAllData(query, res) {
         returnArray.push(obj);
         delete results;
         if(returnArray.length == 1600) {
-          sendResponse(res);
+          sendReturnArray(res);
         }
       }
     connection.release();
@@ -62,9 +62,12 @@ function queryDbForAllData(query, res) {
   });
 }
 
-function sendResponse(res) {
+function sendReturnArray(res) {
   console.log("Sending response!");
   res.send(returnArray);
+
+  //reset return array
+  returnArray = [];
 }
 
 /** Only get the data between these coords **/
