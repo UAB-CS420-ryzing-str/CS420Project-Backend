@@ -40,7 +40,7 @@ app.get("/getData", function(req, res) {
           }
 
           connection.getConnection((err, connection) => {
-            connection.query(SELECT_BETWEEN, [0.5, 1.0, 1600, 1600.5], function(err, results) {
+            connection.query(SELECT_BETWEEN, [lat +.05, lat, lon -0.5, lon], function(err, results) {
               if(err) {
                     console.log("error: " + err);
                   } else {
