@@ -3,16 +3,17 @@ var http = require("http").Server(app);
 var mysql = require("mysql");
 
 const port = 8080;
-const SELECT_BETWEEN = "SELECT COUNT(*) AS rowCount FROM hurricane_data WHERE (LatNS BETWEEN ? AND ?) AND (LonEW BETWEEN ? AND ?) LIMIT 1;";
+var SELECT_BETWEEN = "SELECT COUNT(*) FROM hurricane_data WHERE (LatNS BETWEEN ? AND ?) AND (LonEW BETWEEN ? AND ?)";
+// "SELECT COUNT(*) FROM hurricane_data WHERE (LatNS BETWEEN -200.0 AND 0.0) AND (LonEW BETWEEN 1600 AND 1800)"
 
 const min_lat = 0.0;
 const max_lat = -10;
 const min_long = 1600;
 const max_long = 1610;
 
-const connection = mysql.createPool({
+const pool = mysql.createPool({
    connectionLimit: 25,
-   host: '45.55.77.74/',
+   host: '45.55.77.74',
    user: 'node',
    password: 'nodePassword',
    database: 'cs420'
@@ -39,22 +40,42 @@ app.get("/getData", function(req, res) {
     //         continue;
     //       }
 
-          connection.getConnection((err, connection) => {
-            connection.query(SELECT_BETWEEN, [max_lat, min_lat, min_long, max_long], function(err, results) {
+          // pool.getConnection((err, connection) => {
+          //   connection.query(SELECT_BETWEEN, [max_lat, min_lat, min_long, max_long], function(err, results) {
+          //     if(err) {
+          //           console.log("error: " + err);
+          //         } else {
+          //           var obj = {};
+          //
+          //           console.log("COUNT: " + results[0].rowCount);
+          //           obj["data"] = results[0].rowCount;
+          //
+          //           delete results;
+          //           returnArray.push(obj);
+          //       }
+          //     connection.release();
+          //   });
+          // });
+
+          var query = "SELECT COUNT(*) FROM hurricane_data WHERE (LatNS BETWEEN " + max_lat + " AND " + min_lat + ") AND (LonEW BETWEEN " + min_long + " AND " + max_long + ");";
+          console.log(query);
+          pool.getConnection((err, connection) => {
+            connection.query(query, function(err, results) {
               if(err) {
-                    console.log("error: " + err);
-                  } else {
-                    var obj = {};
+                        console.log("error: " + err);
+                      } else {
+                        var obj = {};
 
-                    console.log("COUNT: " + results[0].rowCount);
-                    obj["data"] = results[0].rowCount;
+                        console.log("COUNT: " + JSON.stringify(results));
+                        obj["data"] = results[0].rowCount;
 
-                    delete results;
-                    returnArray.push(obj);
-                }
-              connection.release();
-            });
+                        delete results;
+                        returnArray.push(obj);
+                    }
+                  connection.release();
+                });
           });
+
 
         //   connection.query(SELECT_BETWEEN, [lat - 0.5, lat, lon - 0.5, lon], function(err, results) {
         //     if(err) {
