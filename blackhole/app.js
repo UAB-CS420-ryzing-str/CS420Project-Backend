@@ -11,7 +11,7 @@ const min_long = 1600;
 const max_long = 1800;
 
 const connection = mysql.createConnection({
-   host: 'cs457.andrewpe.com',
+   host: 'localhost',
    user: 'node',
    password: 'nodePassword',
    database: 'cs420'
