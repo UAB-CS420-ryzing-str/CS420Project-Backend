@@ -39,8 +39,8 @@ app.get("/getData", function(req, res) {
             continue;
           }
 
-          connection.getConnection((err, row, fields) => {
-            connection.query(SELECT_BETWEEN, [lat - 0.5, lat, lon - 0.5, lon], (err, results) => {
+          connection.getConnection((err, connection) => {
+            connection.query(SELECT_BETWEEN, [lat - 0.5, lat, lon - 0.5, lon], function(err, results) {
               if(err) {
                     console.log("error: " + err);
                   } else {
