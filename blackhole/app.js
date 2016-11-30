@@ -10,7 +10,8 @@ const max_lat = -200;
 const min_long = 1600;
 const max_long = 1800;
 
-const connection = mysql.createConnection({
+const connection = mysql.createPool({
+   connectionLimit: 25,
    host: 'localhost',
    user: 'node',
    password: 'nodePassword',
@@ -40,21 +41,36 @@ app.get("/getData", function(req, res) {
             continue;
           }
 
-          connection.query(SELECT_BETWEEN, [lat - 0.5, lat, lon - 0.5, lon], function(err, results) {
-            if(err) {
-              console.log("error: " + err);
-            } else {
-              var obj = {};
-              obj["data"] = results.length;
+          connection.getConnection((err, row, fields) => {
+            connection.query(SELECT_BETWEEN, [lat - 0.5, lat, lon - 0.5, lon], (err, results) => {
+              if(err) {
+                    console.log("error: " + err);
+                  } else {
+                    var obj = {};
+                    obj["data"] = results.length;
 
-              delete results;
-              returnArray.push(obj);
-          }
-        });
+                    delete results;
+                    returnArray.push(obj);
+                }
+              connection.release();
+            });
+          });
+
+        //   connection.query(SELECT_BETWEEN, [lat - 0.5, lat, lon - 0.5, lon], function(err, results) {
+        //     if(err) {
+        //       console.log("error: " + err);
+        //     } else {
+        //       var obj = {};
+        //       obj["data"] = results.length;
+        //
+        //       delete results;
+        //       returnArray.push(obj);
+        //   }
+        // });
       }
     }
 
-    if(returnArray.length == 40) {
+    while (returnArray.length == 40) {
       res.send(returnArray);
     }
 });
