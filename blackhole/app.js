@@ -3,7 +3,7 @@ var http = require("http").Server(app);
 var mysql = require("mysql");
 
 const port = 8080;
-const SELECT_BETWEEN = "SELECT COUNT(*) AS rowCount FROM hurricane_data WHERE LatNS BETWEEN ? AND ? AND LonEW BETWEEN ? AND ? LIMIT 1;";
+const SELECT_BETWEEN = "SELECT COUNT(*) AS rowCount FROM hurricane_data WHERE (LatNS BETWEEN ? AND ?) AND (LonEW BETWEEN ? AND ?) LIMIT 1;";
 
 const min_lat = 0.0;
 const max_lat = -10;
@@ -40,7 +40,7 @@ app.get("/getData", function(req, res) {
           }
 
           connection.getConnection((err, connection) => {
-            connection.query(SELECT_BETWEEN, [lat +.05, lat, lon -0.5, lon], function(err, results) {
+            connection.query(SELECT_BETWEEN, [lat, lat +.05, lon -0.5, lon], function(err, results) {
               if(err) {
                     console.log("error: " + err);
                   } else {
