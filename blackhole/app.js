@@ -7,9 +7,9 @@ var SELECT_BETWEEN = "SELECT COUNT(*) FROM hurricane_data WHERE (LatNS BETWEEN ?
 // "SELECT COUNT(*) FROM hurricane_data WHERE (LatNS BETWEEN -200.0 AND 0.0) AND (LonEW BETWEEN 1600 AND 1800)"
 
 const min_lat = 0.0;
-const max_lat = -10;
+const max_lat = -200;
 const min_long = 1600;
-const max_long = 1610;
+const max_long = 1800;
 
 const pool = mysql.createPool({
    connectionLimit: 25,
