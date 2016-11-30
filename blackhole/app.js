@@ -19,6 +19,8 @@ const pool = mysql.createPool({
    database: 'cs420'
  });
 
+ var returnArray = [];
+
 app.get("/", function(req, res) {
   res.send("Hello, World!");
 });
@@ -31,72 +33,53 @@ app.get("/health", function(req, res) {
 app.get("/getData", function(req, res) {
 
   console.log("REQUEST RECIEVED!!");
-  var returnArray = [];
+  // var returnArray = [];
 
-    // for(var lat = min_lat; lat >= max_lat; lat -= 0.5) {
-    //   for(var lon = min_long; lon <= max_long; lon += 0.5) {
-    //     //skip the first loop to prevent getting values between 0 and 0
-    //       if(lat == min_lat && lon == min_long) {
-    //         continue;
-    //       }
+  for(var current_lat = min_lat; current_lat >= max_lat; current_lat -= .5) {
+    for(var current_long = min_long; current_long <= max_long; current_long += .5) {
 
-          // pool.getConnection((err, connection) => {
-          //   connection.query(SELECT_BETWEEN, [max_lat, min_lat, min_long, max_long], function(err, results) {
-          //     if(err) {
-          //           console.log("error: " + err);
-          //         } else {
-          //           var obj = {};
-          //
-          //           console.log("COUNT: " + results[0].rowCount);
-          //           obj["data"] = results[0].rowCount;
-          //
-          //           delete results;
-          //           returnArray.push(obj);
-          //       }
-          //     connection.release();
-          //   });
-          // });
+      var lat_back_step = current_lat + .5;
+      var long_back_step = current_long - .5;
+      var query = "SELECT COUNT(*) as rowCount FROM hurricane_data WHERE (LatNS BETWEEN " + current_lat + " AND " + lat_back_step + ") AND (LonEW BETWEEN " + long_back_step + " AND " + current_long + ");";
+      console.log("BUILT QUERY: " + query);
+      console.log("");
+      pool.getConnection((err, connection) => {
+        connection.query(query, function(err, results) {
+          if(err) {
+                    console.log("error: " + err);
+                  } else {
+                    var obj = {};
 
-          var query = "SELECT COUNT(*) FROM hurricane_data WHERE (LatNS BETWEEN " + max_lat + " AND " + min_lat + ") AND (LonEW BETWEEN " + min_long + " AND " + max_long + ");";
-          console.log(query);
-          pool.getConnection((err, connection) => {
-            connection.query(query, function(err, results) {
-              if(err) {
-                        console.log("error: " + err);
-                      } else {
-                        var obj = {};
+                    console.log("COUNT: " + JSON.stringify(results));
+                    callback(results, res);
+                }
+              connection.release();
+            });
+      });
 
-                        console.log("COUNT: " + JSON.stringify(results));
-                        obj["data"] = results[0].rowCount;
+    }
+  }
 
-                        delete results;
-                        returnArray.push(obj);
-                    }
-                  connection.release();
-                });
-          });
-
-
-        //   connection.query(SELECT_BETWEEN, [lat - 0.5, lat, lon - 0.5, lon], function(err, results) {
-        //     if(err) {
-        //       console.log("error: " + err);
-        //     } else {
-        //       var obj = {};
-        //       obj["data"] = results.length;
-        //
-        //       delete results;
-        //       returnArray.push(obj);
-        //   }
-        // });
-    //   }
-    // }
-
-    // while (returnArray.length == 40) {
-    //   res.send(returnArray);
-    // }
-
-    res.send(returnArray);
+  res.send(returnArray);
+    // res.send(returnArray);
 });
+
+function callback(data, res) {
+  var obj = {};
+  obj["data"] = data[0].rowCount;
+  returnArray.push(obj);
+  delete results;
+
+  console.log("return array = " + returnArray);
+
+  if(returnArray.length == 10) {
+    sendArray(res);
+  }
+}
+
+function sendArray(res) {
+  res.send(returnArray);
+}
 
 /** Only get the data between these coords **/
 app.get("/get/location/:minLat/:maxLat/:minLong/:maxLong", function(req, res) {
