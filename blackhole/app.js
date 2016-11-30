@@ -3,7 +3,7 @@ var http = require("http").Server(app);
 var mysql = require("mysql");
 
 const port = 8080;
-const SELECT_BETWEEN = "SELECT * FROM cs420 WHERE LatNS BETWEEN ? AND ? AND LonEW BETWEEN ? AND ?";
+const SELECT_BETWEEN = "SELECT * FROM hurricane_data WHERE LatNS BETWEEN ? AND ? AND LonEW BETWEEN ? AND ?;";
 
 const min_lat = 0.0;
 const max_lat = -200;
