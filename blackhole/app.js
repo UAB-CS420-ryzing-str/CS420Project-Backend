@@ -75,6 +75,8 @@ function sendReturnArray(res) {
   returnArray = [];
 }
 
-app.listen(port, function() {
+ var server = app.listen(port, function() {
   console.log("Blackhole listening on port =" + port);
 });
+
+module.exports = server;
