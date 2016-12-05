@@ -26,7 +26,6 @@ app.get("/health", function(req, res) {
   res.send("Sex, Drugs, Rock & Roll!");
 });
 
-/** Only get the data between these coords **/
 app.get("/get/location/minLat/:minLat/maxLat/:maxLat/minLong/:minLong/maxLong/:maxLong", function(req, res) {
 
   var minLat = req.params.minLat * 10;
