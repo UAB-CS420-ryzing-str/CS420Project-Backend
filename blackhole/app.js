@@ -43,7 +43,7 @@ app.get("/get/location/minLat/:minLat/maxLat/:maxLat/minLong/:minLong/maxLong/:m
       var long_back_step = current_long - 5;
 
       var query = "SELECT LatNS, LonEW, YYYYMMDDHH FROM hurricane_data WHERE (LatNS BETWEEN " + current_lat + " AND " + lat_back_step + ") AND (LonEW BETWEEN " + long_back_step + " AND " + current_long + ");";
-      queryDbForAllData(query, lookIndex, res);
+      queryDbForAllData(query, resultIndex, res);
       resultIndex++;
     }
   }
