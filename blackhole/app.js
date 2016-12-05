@@ -36,18 +36,21 @@ app.get("/get/location/minLat/:minLat/maxLat/:maxLat/minLong/:minLong/maxLong/:m
 
   console.log("/get/location request recieved minLat:" + minLat + " maxLat:" + maxLat + " minLong:" + minLong + " maxLong:" + maxLong);
 
+  var resultIndex = 0;
+
   for(var current_lat = maxLat; current_lat >= minLat; current_lat -= 5) {
     for(var current_long = minLong; current_long <= maxLong; current_long += 5) {
       var lat_back_step = current_lat + 5;
       var long_back_step = current_long - 5;
 
       var query = "SELECT LatNS, LonEW, YYYYMMDDHH FROM hurricane_data WHERE (LatNS BETWEEN " + current_lat + " AND " + lat_back_step + ") AND (LonEW BETWEEN " + long_back_step + " AND " + current_long + ");";
-      queryDbForAllData(query, res);
+      queryDbForAllData(query, lookIndex, res);
+      resultIndex++;
     }
   }
 });
 
-function queryDbForAllData(query, res) {
+function queryDbForAllData(query, resultIndex, res) {
   pool.getConnection((err, connection) => {
     connection.query(query, function(err, results) {
       if(err) {
@@ -56,7 +59,8 @@ function queryDbForAllData(query, res) {
         var obj = {};
         obj["count"] = results.length;
         obj["data"] = results;
-        returnArray.push(obj);
+        obj["index"] = resultIndex;
+        returnArray[resultIndex] = obj;
         delete results;
 
         if(returnArray.length == 1600) {
