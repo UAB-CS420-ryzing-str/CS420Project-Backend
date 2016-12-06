@@ -37,8 +37,8 @@ app.get("/get/location/minLat/:minLat/maxLat/:maxLat/minLong/:minLong/maxLong/:m
 
   var resultIndex = 0;
 
-  for(var current_lat = maxLat; current_lat >= minLat; current_lat -= 5) {
-    for(var current_long = minLong; current_long <= maxLong; current_long += 5) {
+  for(var current_lat = maxLat - 5; current_lat >= minLat; current_lat -= 5) {
+    for(var current_long = minLong + 5; current_long <= maxLong; current_long += 5) {
       var lat_back_step = current_lat + 5;
       var long_back_step = current_long - 5;
 
