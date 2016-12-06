@@ -47,7 +47,7 @@ app.get("/get/location/minLat/:minLat/maxLat/:maxLat/minLong/:minLong/maxLong/:m
 
   Promise.all(querys)
     .then((data)=>{
-      console.log("Sending response!");
+      console.log(`Sending response Length:${data.length}!`);
       res.send(data);
     });
 });
