@@ -52,6 +52,7 @@ app.get("/get/location/minLat/:minLat/maxLat/:maxLat/minLong/:minLong/maxLong/:m
 function queryDbForAllData(query, resultIndex, res) {
   pool.getConnection((err, connection) => {
     connection.query(query, function(err, results) {
+      console.log('Query Done: ' + resultIndex);
       if(err) {
         console.log("error: " + err);
       } else {
