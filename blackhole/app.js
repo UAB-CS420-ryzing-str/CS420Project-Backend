@@ -1,7 +1,8 @@
-var app = require("express")();
-var http = require("http").Server(app);
-var mysql = require("mysql");
-var config = require('./config.json');
+const app = require("express")();
+const http = require("http").Server(app);
+const mysql = require("mysql");
+const Promise = require("bluebird");
+const config = require('./config.json');
 
 const port = 8080;
 const min_lat = 0.0;
@@ -10,78 +11,67 @@ const min_long = 1600;
 const max_long = 1800;
 const pool = mysql.createPool(config.database);
 
- pool.on('connection', (connection)=>{
-  console.log('Connection Made!');
- });
+// var SELECT_BETWEEN = "SELECT COUNT(*) FROM hurricane_data WHERE (LatNS BETWEEN ? AND ?) AND (LonEW BETWEEN ? AND ?)";
+let returnArray = [];
 
- var SELECT_BETWEEN = "SELECT COUNT(*) FROM hurricane_data WHERE (LatNS BETWEEN ? AND ?) AND (LonEW BETWEEN ? AND ?)";
- var returnArray = [];
-
-app.get("/", function(req, res) {
+app.get("/", (req, res)=>{
   res.send("Hello, World!");
 });
 
-app.get("/health", function(req, res) {
+app.get("/health", (req, res)=>{
   res.send("Sex, Drugs, Rock & Roll!");
 });
 
 /** Only get the data between these coords **/
-app.get("/get/location/minLat/:minLat/maxLat/:maxLat/minLong/:minLong/maxLong/:maxLong", function(req, res) {
+app.get("/get/location/minLat/:minLat/maxLat/:maxLat/minLong/:minLong/maxLong/:maxLong", (req, res)=>{
 
-  var minLat = req.params.minLat * 10;
-  var maxLat = req.params.maxLat * 10;
-  var minLong = req.params.minLong * 10;
-  var maxLong = req.params.maxLong * 10;
+  const minLat = req.params.minLat * 10;
+  const maxLat = req.params.maxLat * 10;
+  const minLong = req.params.minLong * 10;
+  const maxLong = req.params.maxLong * 10;
 
   console.log("/get/location request recieved minLat:" + minLat + " maxLat:" + maxLat + " minLong:" + minLong + " maxLong:" + maxLong);
 
-  var resultIndex = 0;
-  var counterObj = { counter: 0 };
+  var querys = [];
+  var queryIndex = 0;
   for(var current_lat = maxLat - 5; current_lat >= minLat; current_lat -= 5) {
     for(var current_long = minLong + 5; current_long <= maxLong; current_long += 5) {
-      var lat_back_step = current_lat + 5;
-      var long_back_step = current_long - 5;
+      const lat_back_step = current_lat + 5;
+      const long_back_step = current_long - 5;
 
-      var query = "SELECT LatNS, LonEW, YYYYMMDDHH FROM hurricane_data WHERE (LatNS BETWEEN " + current_lat + " AND " + lat_back_step + ") AND (LonEW BETWEEN " + long_back_step + " AND " + current_long + ");";
-      queryDbForAllData(query, resultIndex, counterObj, res);
-      resultIndex++;
+      const query = "SELECT LatNS, LonEW, YYYYMMDDHH FROM hurricane_data WHERE (LatNS BETWEEN " + current_lat + " AND " + lat_back_step + ") AND (LonEW BETWEEN " + long_back_step + " AND " + current_long + ");";
+      querys.push(queryDbForAllData(query, queryIndex, res));
+      queryIndex++;
     }
   }
+
+  Promise.all(querys)
+    .then((data)=>{
+      console.log("Sending response!");
+      res.send(data);
+    });
 });
 
-function queryDbForAllData(query, resultIndex, counterObj, res) {
+const queryDbForAllData = (query, queryIndex, res) => new Promise((resolve, reject)=> {
   pool.getConnection((err, connection) => {
-    connection.query(query, function(err, results) {
-      counterObj.counter++;
-      console.log('Query Done: ' + counterObj.counter);
-      if(err) {
-        console.log("error: " + err);
-      } else {
+    connection.query(query, (err, results)=> {
+      console.log('Query Done');
+
+      if(err){ console.error("error: " + err);}
+      else {
         var obj = {};
         obj["count"] = results.length;
         obj["data"] = results;
-        obj["index"] = resultIndex;
-        returnArray[resultIndex] = obj;
+        obj["index"] = queryIndex;
         delete results;
 
-        if(counterObj.counter == 1600) {
-          sendReturnArray(res);
-        }
+        resolve(obj);
       }
-    connection.release();
+      connection.release();
     });
   });
-}
-
-function sendReturnArray(res) {
-  console.log("Sending response!");
-  res.send(returnArray);
-  //reset return array
-  returnArray = [];
-}
-
- var server = app.listen(port, function() {
-  console.log("Blackhole listening on port =" + port);
 });
 
-module.exports = server;
+const server = app.listen(port, function() {
+  console.log("Blackhole listening on port =" + port);
+});
