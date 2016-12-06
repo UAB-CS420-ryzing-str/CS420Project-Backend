@@ -25,6 +25,8 @@ app.get("/health", (req, res)=>{
 /** Only get the data between these coords **/
 app.get("/get/location/minLat/:minLat/maxLat/:maxLat/minLong/:minLong/maxLong/:maxLong", (req, res)=>{
 
+  console.log(req.params);
+
   const minLat = req.params.minLat * 10;
   const maxLat = req.params.maxLat * 10;
   const minLong = req.params.minLong * 10;
