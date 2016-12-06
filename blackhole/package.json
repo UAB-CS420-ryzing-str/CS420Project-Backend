@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "test": "mocha --sort --timeout 30000"
+    "test": "mocha"
   },
   "dependencies": {
     "chai": "^3.5.0",
