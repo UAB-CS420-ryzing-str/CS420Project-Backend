@@ -55,8 +55,6 @@ app.get("/get/location/minLat/:minLat/maxLat/:maxLat/minLong/:minLong/maxLong/:m
 const queryDbForAllData = (query, queryIndex, res) => new Promise((resolve, reject)=> {
   pool.getConnection((err, connection) => {
     connection.query(query, (err, results)=> {
-      console.log('Query Done');
-
       if(err){ console.error("error: " + err);}
       else {
         var obj = {};
