@@ -1,18 +1,17 @@
 var app = require("express")();
 var http = require("http").Server(app);
 var mysql = require("mysql");
+var config = require('./config.json');
 
 const port = 8080;
 const min_lat = 0.0;
 const max_lat = -200;
 const min_long = 1600;
 const max_long = 1800;
-const pool = mysql.createPool({
-   connectionLimit: 75,
-   host: '45.55.77.74',
-   user: 'node',
-   password: 'nodePassword',
-   database: 'cs420'
+const pool = mysql.createPool(config.database);
+
+ pool.on('connection', (connection)=>{
+  console.log('Connection Made!');
  });
 
  var SELECT_BETWEEN = "SELECT COUNT(*) FROM hurricane_data WHERE (LatNS BETWEEN ? AND ?) AND (LonEW BETWEEN ? AND ?)";
