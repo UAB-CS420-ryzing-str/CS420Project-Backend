@@ -51,7 +51,7 @@ app.get("/health", (req, res) => {
 });
 
 /** Only get the data between these coords **/
-app.get("/get/location/minLat/:minLat/maxLat/:maxLat/minLong/:minLong/maxLong/:maxLong", (req, res) => {
+app.get("/get/location/minLat/:minLat/maxLat/:maxLat/minLong/:minLong/maxLong/:maxLong/dataset/:dataSet", (req, res) => {
 
     console.log(req.params);
 
@@ -59,6 +59,7 @@ app.get("/get/location/minLat/:minLat/maxLat/:maxLat/minLong/:minLong/maxLong/:m
     const maxLat = req.params.maxLat * 10;
     const minLong = req.params.minLong * 10;
     const maxLong = req.params.maxLong * 10;
+    const dataset = req.params.dataSet;
 
     console.log("/get/location request recieved minLat:" + minLat + " maxLat:" + maxLat + " minLong:" + minLong + " maxLong:" + maxLong);
 
@@ -69,7 +70,7 @@ app.get("/get/location/minLat/:minLat/maxLat/:maxLat/minLong/:minLong/maxLong/:m
             const lat_back_step = current_lat + 5;
             const long_back_step = current_long - 5;
 
-            const query = "SELECT LatNS, LonEW, YYYYMMDDHH FROM hurricane_data WHERE (LatNS BETWEEN " + current_lat + " AND " + lat_back_step + ") AND (LonEW BETWEEN " + long_back_step + " AND " + current_long + ");";
+            const query = "SELECT LatNS, LonEW, YYYYMMDDHH FROM hurricane_data WHERE (LatNS BETWEEN " + current_lat + " AND " + lat_back_step + ") AND (LonEW BETWEEN " + long_back_step + " AND " + current_long + ") AND dataset =" + dataset + ";";
             querys.push(queryDbForAllData(query, queryIndex, res));
             queryIndex++;
         }
