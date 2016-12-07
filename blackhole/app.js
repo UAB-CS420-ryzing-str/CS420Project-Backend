@@ -27,7 +27,7 @@ app.get("/datasets", (req, res) => {
   pool.getConnection((err, connection) => {
     connection.query(query, (err, results) => {
         if (err) {
-            console.log("ERROR: " + err):
+            console.log("ERROR: " + err);
         }
 
         let returnArray = [];
