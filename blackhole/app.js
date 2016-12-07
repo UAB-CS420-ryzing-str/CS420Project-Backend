@@ -29,6 +29,13 @@ app.get("/datasets", (req, res) => {
         if (err) {
             console.log("ERROR: " + err):
         }
+
+        let returnArray = [];
+
+        results.forEach((result)=>{
+          returnArray.push(result.dataset);
+        });
+
         res.send(results);
     });
     connection.release();
