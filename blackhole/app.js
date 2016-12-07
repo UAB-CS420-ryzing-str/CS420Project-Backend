@@ -36,7 +36,7 @@ app.get("/datasets", (req, res) => {
           returnArray.push(result.dataset);
         });
 
-        res.send(results);
+        res.send(returnArray);
     });
     connection.release();
   });
