@@ -70,7 +70,7 @@ app.get("/get/location/minLat/:minLat/maxLat/:maxLat/minLong/:minLong/maxLong/:m
             const lat_back_step = current_lat + 5;
             const long_back_step = current_long - 5;
 
-            const query = "SELECT LatNS, LonEW, YYYYMMDDHH FROM hurricane_data WHERE (LatNS BETWEEN " + current_lat + " AND " + lat_back_step + ") AND (LonEW BETWEEN " + long_back_step + " AND " + current_long + ") AND dataset = '" + ds + "'';";
+            const query = "SELECT LatNS, LonEW, YYYYMMDDHH FROM hurricane_data WHERE (LatNS BETWEEN " + current_lat + " AND " + lat_back_step + ") AND (LonEW BETWEEN " + long_back_step + " AND " + current_long + ") AND dataset = '" + ds + "';";
             querys.push(queryDbForAllData(query, queryIndex, res));
             queryIndex++;
         }
