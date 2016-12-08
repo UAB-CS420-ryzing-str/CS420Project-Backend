@@ -319,14 +319,16 @@ const insertIntoDB = (result, dataset) => new Promise((resolve, reject) => {
         }
     }
 
+    SQLString = SQLString.slice(0, -2);
 
+    SQLString += `, dataset ='${dataset}', `;
 
     SQLString = SQLString.slice(0, -2);
 
-    SQLString += `dataset ='${dataset}'`;
-
     SQLString += ';';
 
+
+    console.log(SQLString);
 
     if (SQLString == 'INSERT INTO hurricane_data SE;') {
         reject('Fail');
