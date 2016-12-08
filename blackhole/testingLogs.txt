@@ -1,0 +1,21 @@
+
+> blackhole@0.0.1 test /home/stephenstucky/programming/CS420Project-Backend/blackhole
+> mocha --sort --timeout 30000
+
+
+
+Blackhole listening on port =8080
+  /GET health
+    ✓ it should return a health string (101ms)
+
+  /GET data
+/get/location request recieved minLat:-200 maxLat:0 minLong:1600 maxLong:1800
+Sending response!
+    ✓ it should return a json containing a bunch of data. (2680ms)
+
+  /GET data
+    ✓ it should return a 404 error.
+
+
+  3 passing (3s)
+
