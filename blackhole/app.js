@@ -316,21 +316,29 @@ const insertIntoDB = (result) => new Promise((resolve, reject) => {
             SQLString += `${dataType} = '${result[dataType]}', `;
         }
     }
+
+
+
     SQLString = SQLString.slice(0, -2);
+
+    SQLString += `dataset ='${req.body.dataset}'`;
+
     SQLString += ';';
+
 
     if (SQLString == 'INSERT INTO hurricane_data SE;') {
         reject('Fail');
     } else {
-        pool.getConnection((err, connection)=> {
-          connection.query(SQLString, (err, rows, fields)=>{
-            if (err){
-              console.log(err);
-              reject(err)
-            };
-            connection.release();
-            resolve('OK');
-          });
-        });
+      resolve(SQLString);
+        // pool.getConnection((err, connection)=> {
+        //   connection.query(SQLString, (err, rows, fields)=>{
+        //     if (err){
+        //       console.log(err);
+        //       reject(err)
+        //     };
+        //     connection.release();
+        //     resolve('OK');
+        //   });
+        // });
     }
 });
