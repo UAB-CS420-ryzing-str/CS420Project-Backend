@@ -104,6 +104,7 @@ const queryDbForAllData = (query, queryIndex, res) => new Promise((resolve, reje
 
 
 app.post('/upload', upload.array('files'), (req, res) => {
+    console.log('Upoading Data');
 
     for (var i = 0; i < req.files.length; i++) {
         console.log(req.files[i].path);
