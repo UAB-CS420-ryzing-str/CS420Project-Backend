@@ -111,10 +111,14 @@ app.post('/upload', upload.array('files'), (req, res) => {
         getFileContents(req.files[i].path)
             .then(splitLines)
             .map(objectizeResults)
-            .map(insertIntoDB, {
-                concurrency: 25
-            })
-            .then(console.log)
+            .map((data)=>{
+              insertIntoDB(data, req.body.dataset)
+                .then(console.log);
+            },
+              {
+                  concurrency: 25
+              }
+            )
             .catch(console.log);
     }
 
@@ -308,7 +312,7 @@ const objectizeResults = (resultString) => new Promise((resolve, reject) => {
     //resolve(resultObject);
 
 });
-const insertIntoDB = (result) => new Promise((resolve, reject) => {
+const insertIntoDB = (result, dataset) => new Promise((resolve, reject) => {
     let SQLString = 'INSERT INTO hurricane_data SET ';
 
     for (var dataType in result) {
@@ -316,7 +320,13 @@ const insertIntoDB = (result) => new Promise((resolve, reject) => {
             SQLString += `${dataType} = '${result[dataType]}', `;
         }
     }
+
     SQLString = SQLString.slice(0, -2);
+
+    SQLString += `, dataset ='${dataset}', `;
+
+    SQLString = SQLString.slice(0, -2);
+
     SQLString += ';';
 
     if (SQLString == 'INSERT INTO hurricane_data SE;') {
@@ -334,3 +344,5 @@ const insertIntoDB = (result) => new Promise((resolve, reject) => {
         });
     }
 });
+
+module.exports = server
