@@ -112,11 +112,13 @@ app.post('/upload', upload.array('files'), (req, res) => {
             .then(splitLines)
             .map(objectizeResults)
             .map((data)=>{
-              insertIntoDB(data, req.body.dataset);
-            }, {
-                concurrency: 25
-            })
-            .then(console.log)
+              insertIntoDB(data, req.body.dataset)
+                .then(console.log);
+            }, 
+              {
+                  concurrency: 25
+              }
+            )
             .catch(console.log);
     }
 
@@ -327,22 +329,18 @@ const insertIntoDB = (result, dataset) => new Promise((resolve, reject) => {
 
     SQLString += ';';
 
-
-    console.log(SQLString);
-
     if (SQLString == 'INSERT INTO hurricane_data SE;') {
         reject('Fail');
     } else {
-      resolve(SQLString);
-        // pool.getConnection((err, connection)=> {
-        //   connection.query(SQLString, (err, rows, fields)=>{
-        //     if (err){
-        //       console.log(err);
-        //       reject(err)
-        //     };
-        //     connection.release();
-        //     resolve('OK');
-        //   });
-        // });
+        pool.getConnection((err, connection)=> {
+          connection.query(SQLString, (err, rows, fields)=>{
+            if (err){
+              console.log(err);
+              reject(err)
+            };
+            connection.release();
+            resolve('OK');
+          });
+        });
     }
 });
