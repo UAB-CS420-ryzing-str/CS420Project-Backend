@@ -114,7 +114,8 @@ app.post('/upload', upload.array('files'), (req, res) => {
             .map(insertIntoDB, {
                 concurrency: 25
             })
-            .then(console.log);
+            .then(console.log)
+            .catch(console.log);
     }
 
     res.send('OK');
@@ -319,18 +320,17 @@ const insertIntoDB = (result) => new Promise((resolve, reject) => {
     SQLString += ';';
 
     if (SQLString == 'INSERT INTO hurricane_data SE;') {
-        resolve('Fail');
+        reject('Fail');
     } else {
-        resolve(SQLString);
-        // pool.getConnection((err, connection)=> {
-        //   connection.query(SQLString, (err, rows, fields)=>{
-        //     if (err){
-        //       console.log(err);
-        //       resolve(err)
-        //     };
-        //     connection.release();
-        //     resolve('OK');
-        //   });
-        // });
+        pool.getConnection((err, connection)=> {
+          connection.query(SQLString, (err, rows, fields)=>{
+            if (err){
+              console.log(err);
+              reject(err)
+            };
+            connection.release();
+            resolve('OK');
+          });
+        });
     }
 });
