@@ -114,7 +114,7 @@ app.post('/upload', upload.array('files'), (req, res) => {
             .map((data)=>{
               insertIntoDB(data, req.body.dataset)
                 .then(console.log);
-            }, 
+            },
               {
                   concurrency: 25
               }
@@ -344,3 +344,5 @@ const insertIntoDB = (result, dataset) => new Promise((resolve, reject) => {
         });
     }
 });
+
+module.exports = server
