@@ -111,7 +111,9 @@ app.post('/upload', upload.array('files'), (req, res) => {
         getFileContents(req.files[i].path)
             .then(splitLines)
             .map(objectizeResults)
-            .map(insertIntoDB, {
+            .map((data)=>{
+              insertIntoDB(data, req.body.dataset);
+            }, {
                 concurrency: 25
             })
             .then(console.log)
