@@ -310,7 +310,7 @@ const objectizeResults = (resultString) => new Promise((resolve, reject) => {
     //resolve(resultObject);
 
 });
-const insertIntoDB = (result) => new Promise((resolve, reject) => {
+const insertIntoDB = (result, dataset) => new Promise((resolve, reject) => {
     let SQLString = 'INSERT INTO hurricane_data SET ';
 
     for (var dataType in result) {
@@ -323,7 +323,7 @@ const insertIntoDB = (result) => new Promise((resolve, reject) => {
 
     SQLString = SQLString.slice(0, -2);
 
-    SQLString += `dataset ='${req.body.dataset}'`;
+    SQLString += `dataset ='${dataset}'`;
 
     SQLString += ';';
 
